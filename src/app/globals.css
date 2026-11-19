@@ -1,0 +1,347 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Landscape phones: too short to pin a button above the tab bar */
+@custom-variant short (@media (max-height: 30rem));
+
+/*
+ * Design tokens. Raw color values live only in the two blocks below; everything
+ * else references these names. `npm run check:contrast` verifies AA against them.
+ */
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces */
+  --background: #faf9f7;
+  --surface: #ffffff;
+  --muted: #f3f1ed;
+  --border: #ece9e4;
+  --input: #8f8a83;
+
+  /* Text. --subtle is the brand secondary #7A7A85: it reaches 3:1 but not 4.5:1,
+     so it is for icons and large text only. Small text uses --muted-foreground. */
+  --foreground: #2b2b2b;
+  --muted-foreground: #6b6b76;
+  --subtle: #7a7a85;
+
+  /* Primary */
+  --primary: #6c63e6;
+  --primary-hover: #6158db;
+  --primary-deep: #5249c9;
+  --primary-foreground: #ffffff;
+  --primary-tint: #e9e7fb;
+  --primary-tint-hover: #dedbf8;
+  --primary-ink: #5249c9;
+  --ring: #5249c9;
+
+  /* Warm accent: gentle warnings and the last seconds of a timer */
+  --warm: #ffc9a8;
+  --warm-soft: #ffeee3;
+  --warm-ink: #7a4022;
+
+  /* Success */
+  --success: #b8ebd0;
+  --success-soft: #e6f8ee;
+  --success-ink: #1f5c43;
+
+  /* Destructive: muted dark rose, never a saturated red */
+  --destructive: #8c4a5a;
+  --destructive-hover: #7c4050;
+  --destructive-foreground: #ffffff;
+  --destructive-soft: #f6e9ec;
+  --destructive-ink: #7c4050;
+
+  /* Mascot */
+  --mascot-from: #8a82f0;
+  --mascot-to: #5f56d8;
+  --mascot-face: #ffffff;
+
+  /* Video stage: dark in both themes, so faces and camera light read naturally */
+  --stage: #29272d;
+  --stage-raised: #3a3840;
+  --stage-foreground: #f3f1ee;
+  --stage-muted: #c4c1cc;
+
+  --overlay: rgb(43 38 33 / 0.32);
+  --gradient-primary: linear-gradient(180deg, rgb(82 73 201 / 0) 0%, rgb(82 73 201 / 0.22) 100%);
+  --glow: rgb(108 99 230 / 0.1);
+
+  /* Elevation: soft, wide, low opacity, tinted warm rather than gray */
+  --elevation-soft:
+    0 1px 2px rgb(60 50 40 / 0.03), 0 8px 24px rgb(60 50 40 / 0.04), 0 24px 56px rgb(60 50 40 / 0.03);
+  --elevation-lift:
+    0 2px 4px rgb(60 50 40 / 0.04), 0 12px 32px rgb(60 50 40 / 0.07), 0 32px 72px rgb(60 50 40 / 0.06);
+  --elevation-primary:
+    inset 0 1px 0 rgb(255 255 255 / 0.16), 0 1px 2px rgb(82 73 201 / 0.24), 0 8px 24px rgb(108 99 230 / 0.2);
+
+  /* shadcn/ui names, so components added later pick up the design system */
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --secondary: var(--primary-tint);
+  --secondary-foreground: var(--primary-ink);
+  --accent: var(--primary-tint);
+  --accent-foreground: var(--primary-ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #191817;
+    --surface: #232220;
+    --muted: #2c2b28;
+    --border: #363431;
+    --input: #7f7b75;
+
+    --foreground: #f3f1ee;
+    --muted-foreground: #aeacb5;
+    --subtle: #8f8d96;
+
+    --primary: #6c63e6;
+    --primary-hover: #6158db;
+    --primary-deep: #5249c9;
+    --primary-foreground: #ffffff;
+    --primary-tint: #2f2c52;
+    --primary-tint-hover: #38345f;
+    --primary-ink: #bdb8fa;
+    --ring: #bdb8fa;
+
+    --warm: #ffc9a8;
+    --warm-soft: #3b2b21;
+    --warm-ink: #ffd9c2;
+
+    --success: #b8ebd0;
+    --success-soft: #1e3229;
+    --success-ink: #c5f0da;
+
+    --destructive: #8c4a5a;
+    --destructive-hover: #7c4050;
+    --destructive-foreground: #ffffff;
+    --destructive-soft: #3a2429;
+    --destructive-ink: #e8b3c0;
+
+    --mascot-from: #9089f2;
+    --mascot-to: #665de0;
+    --mascot-face: #ffffff;
+
+    --stage: #121113;
+    --stage-raised: #24222a;
+    --stage-foreground: #f3f1ee;
+    --stage-muted: #b3b0bb;
+
+    --overlay: rgb(10 9 8 / 0.56);
+    --glow: rgb(108 99 230 / 0.12);
+
+    --elevation-soft: 0 1px 2px rgb(10 9 8 / 0.24), 0 8px 24px rgb(10 9 8 / 0.16);
+    --elevation-lift: 0 2px 4px rgb(10 9 8 / 0.28), 0 16px 40px rgb(10 9 8 / 0.32);
+    --elevation-primary: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 1px 2px rgb(10 9 8 / 0.32);
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-tint: var(--primary-tint);
+  --color-primary-tint-hover: var(--primary-tint-hover);
+  --color-primary-ink: var(--primary-ink);
+
+  --color-warm: var(--warm);
+  --color-warm-soft: var(--warm-soft);
+  --color-warm-ink: var(--warm-ink);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-success-ink: var(--success-ink);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-destructive-ink: var(--destructive-ink);
+
+  --color-overlay: var(--overlay);
+  --color-stage: var(--stage);
+  --color-stage-raised: var(--stage-raised);
+  --color-stage-foreground: var(--stage-foreground);
+  --color-stage-muted: var(--stage-muted);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --shadow-soft: var(--elevation-soft);
+  --shadow-lift: var(--elevation-lift);
+  --shadow-primary: var(--elevation-primary);
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+}
+
+@theme {
+  /* Mobile below md, tablet md to lg, desktop from lg (1200px) */
+  --breakpoint-lg: 75rem;
+  --breakpoint-xl: initial;
+  --breakpoint-2xl: initial;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-input: 1rem;
+  --radius-card: 1.5rem;
+  --radius-pill: 9999px;
+
+  --text-display: clamp(2.5rem, 2.1rem + 1.8vw, 3.5rem);
+  --text-display--line-height: 1.14;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 700;
+  --text-title: clamp(2rem, 1.8rem + 0.9vw, 2.5rem);
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.025em;
+  --text-title--font-weight: 700;
+  --text-heading: 1.5rem;
+  --text-heading--line-height: 1.34;
+  --text-heading--letter-spacing: -0.02em;
+  --text-heading--font-weight: 700;
+  --text-subheading: 1.25rem;
+  --text-subheading--line-height: 1.4;
+  --text-subheading--letter-spacing: -0.01em;
+  --text-subheading--font-weight: 600;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+  --text-body: 1rem;
+  --text-body--line-height: 1.625;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.57;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.54;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.34;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-page-enter: page-enter 300ms var(--ease-out) backwards;
+  --animate-shimmer: shimmer 1.8s var(--ease-in-out) infinite;
+  --animate-mascot-blink: mascot-blink 4.5s var(--ease-in-out) 1 backwards;
+  --animate-mascot-wave: mascot-wave 1.4s var(--ease-in-out) 2;
+  --animate-mascot-pop: mascot-pop 600ms var(--ease-out) backwards;
+
+  /* Opacity only: a transform here would re-anchor position: fixed children, moving floating buttons. */
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes shimmer {
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes mascot-blink {
+    0%,
+    38%,
+    42%,
+    86%,
+    90%,
+    100% {
+      transform: scaleY(1);
+    }
+    40%,
+    88% {
+      transform: scaleY(0.1);
+    }
+  }
+
+  @keyframes mascot-wave {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(14deg);
+    }
+    75% {
+      transform: rotate(-10deg);
+    }
+  }
+
+  @keyframes mascot-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+  }
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
+
+  html {
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: clip;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Shows instantly on focus and is never animated, so keyboard users are never without it */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--primary-tint);
+    color: var(--foreground);
+  }
+
+  /* Every Lucide icon in the app shares one stroke weight */
+  svg.lucide {
+    stroke-width: 1.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
