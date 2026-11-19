@@ -38,6 +38,8 @@ export async function getRoom(sessionId: string): Promise<RoomSnapshot | null> {
 
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("get_room", { p_session_id: sessionId });
+  // Signed-out callers are refused by the database (permission denied): to them the room does not exist.
+  if (error?.code === "42501") return null;
   if (error) throw error;
 
   const row = data[0];
