@@ -45,6 +45,14 @@ Free Supabase projects pause after a week without use. Resume yours from the das
 
 Without these, the room still works for questions, timers and roles, and says that video is not set up.
 
+## Deploying to Vercel
+
+The live site is a Vercel project connected to this GitHub repository: every push to `main` deploys to production. If a push does not show up, open the project's **Deployments → … → Create Deployment** and enter `main`.
+
+Set these under **Settings → Environment Variables** (Production and Preview): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_LIVEKIT_URL`, `LIVEKIT_API_KEY` and `LIVEKIT_API_SECRET`. `NEXT_PUBLIC_APP_URL` is optional there: the site uses Vercel's production domain by default.
+
+Browsers only allow the camera and microphone on `https://` pages or `localhost`, so testing on two devices needs the deployed site, not a local address.
+
 ## How the room works
 
 - **Access.** A session has a private invite link. The first person to open it joins as the partner; after that the session is full. Only the two people can read the room, change it or get a video pass. The database enforces this with row-level security and checked functions, not the page.
